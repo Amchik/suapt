@@ -1,0 +1,45 @@
+#!/bin/bash
+
+unset SOCK_DEBUG
+export SOCK_STDIN=1
+
+_usage() {
+  echo "[::sustorage-provider-doas] use _otps for check avalibe opts"
+}
+
+if [[ $# -lt 1 ]]; then
+  _usage
+  exit 1
+fi
+
+case "$1" in
+  version)
+    echo "1"
+    ;;
+  revision)
+    echo "sustorage-provider-doas, runs all via doas"
+    ;;
+  _opts)
+    echo "|version|revision|_opts|prompt|run|"
+    ;;
+  prompt)
+    if [[ $# -lt 3 ]]; then
+      echo "[::sustorage] sustorage prompt user command"
+      exit 1
+    fi
+    user=$2
+    cmd="${@:3}"
+    doas -u $user $cmd
+    exit $?
+    ;;
+  run)
+    if [[ $# -lt 3 ]]; then
+      echo "[::sustorage] sustorage prompt user command"
+      exit 1
+    fi
+    user=$2
+    cmd="${@:3}"
+    doas -n -u $user $cmd
+    exit $?
+    ;;
+esac
