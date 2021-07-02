@@ -8,10 +8,9 @@
 |---------|----------|
 | `-version` | версия `suapt` |
 | `-su` | версии возможных програм, через которые команды выполняются от рута |
-| `-sh` | показывает текущий шел (зачем?..) и говорит, как его добавить как функцию |
-| `i`, `install`, `add` | `apt install` |
-| `rm`, `remove`, `de`, `dd`, `del`, `delet`, `delete` | `apt remove` |
-| `pg`, `pu`, `pr`, `purge` | `apt purge` |
+| `i`, `install`, `add` | `apt install`, без аргументов запускает `apt update` и `apt upgrade` |
+| `rm`, `remove`, `de`, `dd`, `del`, `delet`, `delete` | `apt remove`, без аргументов запускает `apt autoremove` |
+| `pg`, `pu`, `pr`, `purge` | `apt purge`, без аргументов запускает `apt autopurge` |
 | `l`, `ls`, `lst`, `list` | `apt list`, не от рута |
 | `se`, `search` | `apt search`, не от рута |
 | `up`, `update` | `apt update` |
@@ -31,8 +30,15 @@
 Второй способ: скачать его, кинуть куда угодно и написать в `.bashrc`:
 `INCLUDE=1 source /path/to/suapt.bash`
 
-## Остальные директории
+На случай, если у вас рыба (fish), можно написать в файл
+`~/.config/fish/functions/suapt.fish` это:
 
-М, лучше туда не смотреть, если не хочешь увидеть неудачную попытку
-сделать что-то большее, чем алиас на `apt install`
+```fish
+function suapt
+  command $HOME/.local/bin/suapt.bash $argv
+  return $status
+end
+```
+
+Так же кинуть `suapt.bash` в `~/.local/bin/suapt.bash`
 

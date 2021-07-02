@@ -47,14 +47,14 @@ suapt() {
     has doas && local doasp=$ok || local doasp=$notav
     has sudo && local sudop=$ok || local sudop=$notav
     has sustorage && local susp=$ok || local susp=$notav
-    [[ $sustorage = "" ]] && sustorage="disabled"
+    [[ $sustorage = "" ]] && sustorage="none"
     echo "suapt -- like su -c 'apt...', without sudo"
-    echo -e "  version:    \e[1m0.9\e[0m"
+    echo -e "  version:    \e[1m0.9.1\e[0m"
     echo -e "  sustorage:  \e[1m$sustorage\e[0m"
     echo -e "  apt:        \e[1m${aptv#apt }\e[0m"
     echo -e "  @runasroot:$susp sustorage$nc$doasp doas$nc$sudop sudo$nc$sup su$nc"
     echo "   -- By priority: if first not found second will be used etc"
-    echo -e "   -- For get avalibe versions of @runasroot use$b suapt -su$nc"
+    echo -e "   -- For get providers of @runasroot use$b suapt -su$nc"
     echo
     echo -e "src: Amchik/suapt    \e[1;32m __   __   \e[0m"
     echo -e "                \e[1;32m ____/ /  / /__ \e[0m"
@@ -65,10 +65,10 @@ suapt() {
   local args="${@:2}"
   case "$1" in
     -su)
-      local notav="\e[1;31mnot avalibe\e[0m"
+      local notav="\e[1;31mnot found\e[0m"
       local sup=$(su -V 2>/dev/null)
       [[ $sup = "" ]] && local sup=$notav || local sup="${sup#su from }"
-      local doasp="avalibe"
+      local doasp="found"
       has doas || local doasp=$notav
       local sudop=$(sudo --version 2>/dev/null | head -n1 2>/dev/null)
       [[ $sudop = "" ]] && local sudop=$notav || sudop="${sudop#Sudo }"
@@ -88,23 +88,33 @@ suapt() {
         echo "For su (/bin/su, /usr/bin/su) install util-linux package"
       fi
       ;;
-    -sh)
-      echo -e "Using \e[0;34m\$SHELL\e[0m $SHELL."
-      echo "  -- suapt can runs on bash and zsh"
-      echo "For include suapt as function use:"
-      echo -e "\e[1;30m $ \e[0m\e[34mINCLUDE=1\e[0m source \e[4m/usr/bin/suapt\e[0m"
-      ;;
     i|install|add)
-      runasroot apt install "${@:2}"
-      return $?
+      if [[ $# -eq 1 ]] || ([[ $# -eq 2 ]] && [[ $2 = -* ]]); then
+        runasroot apt update
+        local ret=$?
+        [[ $ret -ne 0 ]] && return $ret
+        runasroot apt upgrade $2
+        return $?
+      else
+        runasroot apt install "${@:2}"
+        return $?
+      fi
       ;;
     rm|remove|de|dd|del|delet|delete)
-      runasroot apt remove "${@:2}"
-      return $?
+      if [[ $# -eq 1 ]] || ([[ $# -eq 2 ]] && [[ $2 = -* ]]); then
+        runasroot apt autoremove $2
+      else
+        runasroot apt remove "${@:2}"
+        return $?
+      fi
       ;;
     pg|pu|pr|purge)
-      runasroot apt purge "${@:2}"
-      return $?
+      if [[ $# -eq 1 ]] || ([[ $# -eq 2 ]] && [[ $2 = -* ]]); then
+        runasroot apt autopurge $2
+      else
+        runasroot apt purge "${@:2}"
+        return $?
+      fi
       ;;
     l|ls|lst|list)
       apt list ${@:2}
