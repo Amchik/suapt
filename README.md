@@ -8,7 +8,7 @@
 |---------|----------|
 | `-version` | версия `suapt` |
 | `-su` | версии возможных програм, через которые команды выполняются от рута |
-| `i`, `install`, `add` | `apt install`, без аргументов запускает `apt update` и `apt upgrade` |
+| `i`, `install`, `add` | `apt install` |
 | `rm`, `remove`, `de`, `dd`, `del`, `delet`, `delete` | `apt remove`, без аргументов запускает `apt autoremove` |
 | `pg`, `pu`, `pr`, `purge` | `apt purge`, без аргументов запускает `apt autopurge` |
 | `l`, `ls`, `lst`, `list` | `apt list`, не от рута |

@@ -49,7 +49,7 @@ suapt() {
     has sustorage && local susp=$ok || local susp=$notav
     [[ $sustorage = "" ]] && sustorage="none"
     echo "suapt -- like su -c 'apt...', without sudo"
-    echo -e "  version:    \e[1m0.9.1\e[0m"
+    echo -e "  version:    \e[1m0.9.2\e[0m"
     echo -e "  sustorage:  \e[1m$sustorage\e[0m"
     echo -e "  apt:        \e[1m${aptv#apt }\e[0m"
     echo -e "  @runasroot:$susp sustorage$nc$doasp doas$nc$sudop sudo$nc$sup su$nc"
@@ -89,16 +89,8 @@ suapt() {
       fi
       ;;
     i|install|add)
-      if [[ $# -eq 1 ]] || ([[ $# -eq 2 ]] && [[ $2 = -* ]]); then
-        runasroot apt update
-        local ret=$?
-        [[ $ret -ne 0 ]] && return $ret
-        runasroot apt upgrade $2
-        return $?
-      else
-        runasroot apt install "${@:2}"
-        return $?
-      fi
+			runasroot apt install "${@:2}"
+			return $?
       ;;
     rm|remove|de|dd|del|delet|delete)
       if [[ $# -eq 1 ]] || ([[ $# -eq 2 ]] && [[ $2 = -* ]]); then
