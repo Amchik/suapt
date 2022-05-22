@@ -8,7 +8,7 @@
 |---------|----------|
 | `-version` | версия `suapt` |
 | `-su` | версии возможных програм, через которые команды выполняются от рута |
-| `i`, `install`, `add` | `apt install` |
+| `i`, `install`, `add`, `require` | `apt install` |
 | `rm`, `remove`, `de`, `dd`, `del`, `delet`, `delete` | `apt remove`, без аргументов запускает `apt autoremove` |
 | `pg`, `pu`, `pr`, `purge` | `apt purge`, без аргументов запускает `apt autopurge` |
 | `l`, `ls`, `lst`, `list` | `apt list`, не от рута |
@@ -19,6 +19,7 @@
 | `rei`, `reinstall` | `apt reinstall` |
 | `autopurge`, `autopg`, `autopr` | `apt autopurge` |
 | `autorm`, `autoremove` | `apt autoremove` |
+| `_dyncomp` | Возвращает команду, которую нужно выполнить |
 
 Все неизвесные аргументы, к примеру `suapt --version` выполняются от
 рута.

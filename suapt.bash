@@ -35,6 +35,8 @@ suapt() {
     fi
   }
   if [[ "$1" = "-version" ]]; then
+    local ctc="\e[0;34m"
+    [[ "$IDIOT_MODE" = "1" ]] && local cbc="\e[0;33m" || local cbc="$ctc"
     local aptv=$(apt --version 2>/dev/null)
     [[ "$aptv" = "" ]] && local aptv="not installed"
     local sustorage=$(sustorage revision 2>/dev/null)
@@ -48,18 +50,18 @@ suapt() {
     has sudo && local sudop=$ok || local sudop=$notav
     has sustorage && local susp=$ok || local susp=$notav
     [[ $sustorage = "" ]] && sustorage="none"
-    echo "suapt -- like su -c 'apt...', without sudo"
-    echo -e "  version:    \e[1m0.9.2\e[0m"
+    echo    "suapt -- like su -c 'apt...', without sudo"
+    echo -e "  version:    \e[1m0.9.3\e[0m"
     echo -e "  sustorage:  \e[1m$sustorage\e[0m"
     echo -e "  apt:        \e[1m${aptv#apt }\e[0m"
     echo -e "  @runasroot:$susp sustorage$nc$doasp doas$nc$sudop sudo$nc$sup su$nc"
-    echo "   -- By priority: if first not found second will be used etc"
+    echo    "   -- By priority: if first not found second will be used etc"
     echo -e "   -- For get providers of @runasroot use$b suapt -su$nc"
     echo
-    echo -e "src: Amchik/suapt    \e[1;32m __   __   \e[0m"
-    echo -e "                \e[1;32m ____/ /  / /__ \e[0m"
-    echo -e "Made by Amchik  \e[1;32m/ __/ _ \\/  '_/ \e[0m"
-    echo -e "     with \e[35mlove  \e[1;32m\\__/_//_/_/\\_\\  \e[0m"
+    echo -e "src: Amchik/suapt    $ctc __   __   \e[0m"
+    echo -e "                $ctc ____/ /  / /__ \e[0m"
+    echo -e "Made by ${ctc}ceh${cbc}eki  $cbc/ __/ _ \\/  '_/ \e[0m"
+    echo -e "     with \e[35mlove  $cbc\\__/_//_/_/\\_\\  \e[0m"
     return 0
   fi
   local args="${@:2}"
@@ -88,7 +90,7 @@ suapt() {
         echo "For su (/bin/su, /usr/bin/su) install util-linux package"
       fi
       ;;
-    i|install|add)
+    i|install|add|require)
 			runasroot apt install "${@:2}"
 			return $?
       ;;
@@ -139,6 +141,11 @@ suapt() {
     autorm|autoremove)
       runasroot apt autoremove "${@:2}"
       return $?
+      ;;
+    _dyncomp)
+      # 27 IQ moment:
+      PATH= suapt "${@:2}" 2>/dev/null
+      return 0
       ;;
     *)
       runasroot apt "$1" "${@:2}"
