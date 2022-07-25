@@ -19,6 +19,9 @@ suapt-cfg() {
       test -e "$cfg" || return 0
       while read ln; do
         case "$ln" in
+          in_termux=true)
+            echo 'local termux=true'
+            ;;
           pm=*)
             echo 'local pm="'"$(echo "${ln#pm=}" | sed 's/"//g')\""
             ;;
@@ -163,12 +166,14 @@ suapt() {
   local pm=apt
   if [[ "$PATH" = "" ]]; then
     export _PMPATH="echo $pm"
-    export _SUPATH=""
+    export _SUPATH=" "
   else
     eval "$(suapt-cfg read)"
 
     export _PMPATH="$pm"
-    export _SUPATH=suapt-su
+    [[ "$termux" = true ]] \
+      && export _SUPATH=" " \
+      || export _SUPATH=suapt-su
   fi
 
   if [[ "$1" = "-version" ]] || [[ "$1" = "-V" ]]; then
@@ -191,7 +196,7 @@ suapt() {
     [[ "$xmod" = true ]] \
       && echo    "suapt -- like su -c 'apk...', without sudo" \
       || echo    "suapt -- like su -c 'apt...', without sudo"
-    echo -e "  version:    \e[1m0.10\e[0m"
+    echo -e "  version:    \e[1m0.10.1\e[0m"
     echo -e "  sustorage:  \e[1m$sustorage\e[0m"
     echo -e "  suapt-pm:   \e[1m$(suapt-pm creds)\e[0m"
     echo -e "  suapt-su:  $susp sustorage$nc$doasp doas$nc$sudop sudo$nc$sup su$nc"
@@ -204,7 +209,9 @@ suapt() {
     echo -e "     with \e[35mlove  $cbc\\__/_//_/_/\\_\\  \e[0m"
     [[ "$xmod" = true ]] \
       && echo -e " This \e[1;35mapx\e[0m has \e[0;33msandwich\e[0m making abilities." \
-      || echo -e " This \e[1;35msuapt\e[0m has \e[0;32mtea\e[0m making abilities."
+      || [[ "$termux" = true ]] \
+        && echo -e " This \e[1;35msuapt\e[0m has \e[0;36mbiscuits\e[0m making abilities." \
+        || echo -e " This \e[1;35msuapt\e[0m has \e[0;32mtea\e[0m making abilities."
     return 0
   fi
 
